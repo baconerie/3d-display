@@ -35,6 +35,8 @@ GdkPaintable* cv_mat_to_paintable(const cv::Mat& mat) {
 
     GdkPaintable *paintable = GDK_PAINTABLE(texture);
 
+    g_bytes_unref(bytes);
+
     return paintable;
 }
 
