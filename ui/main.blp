@@ -81,11 +81,6 @@ Box main_box {
                     xalign: 0;
                 }
 
-                Button start_display_button {
-                    label: "Start Display";
-                    hexpand: true;
-                }
-
                 Button calibrate_button {
                     name: "calibrate_button";
                     label: "Calibrate";
@@ -277,116 +272,6 @@ Box display_density_calibration_box {
     }
 }
 
-Box horizontal_displacement_calibration_box {
-    orientation: vertical;
-    spacing: 10;
-    margin-start: 20;
-    margin-end: 20;
-    margin-top: 20;
-    margin-bottom: 20;
-
-    Label {
-        name: "title_label";
-        label: "Calibration: Horizontal Displacement";
-        xalign: 0;
-    }
-
-    Separator {
-        orientation: horizontal;
-    }
-
-    Box {
-        orientation: vertical;
-        spacing: 30;
-
-        Label { 
-            label: "Look at the renderer window. Measure the horizontal distance between the center of the red dot on the renderer window. The green line in the diagram below represents the distance you need to measure.";
-            xalign: 0;
-            wrap: true;
-        }
-
-        Box {
-            orientation: horizontal;
-
-            Label {
-                label: "Distance from green line to red line: ";
-            }
-
-            Entry horizontal_displacement_entry {
-                placeholder-text: "Value in inches";
-            }
-
-            Label {
-                label: " in.";
-            }
-
-        }
-
-        Button horizontal_displacement_continue_button {
-            label: "Continue";
-            halign: start;
-        }
-
-        Picture horizontal_displacement_diagram {
-        }
-    }
-}
-
-Box vertical_displacement_calibration_box {
-    orientation: vertical;
-    spacing: 10;
-    margin-start: 20;
-    margin-end: 20;
-    margin-top: 20;
-    margin-bottom: 20;
-
-    Label {
-        name: "title_label";
-        label: "Calibration: Vertical Displacement";
-        xalign: 0;
-    }
-
-    Separator {
-        orientation: horizontal;
-    }
-
-    Box {
-        orientation: vertical;
-        spacing: 30;
-
-        Label { 
-            label: "Look at the renderer window. Measure the vertical distance between the center of the red dot on the renderer window. The green line in the diagram below represents the distance you need to measure.";
-            xalign: 0;
-            wrap: true;
-        }
-
-        Box {
-            orientation: horizontal;
-
-            Label {
-                label: "Vertical displacement: ";
-            }
-
-            Entry vertical_displacement_entry {
-                placeholder-text: "Value in inches";
-            }
-
-            Label {
-                label: " in.";
-            }
-
-        }
-
-        Button vertical_displacement_continue_button {
-            label: "Continue";
-            halign: start;
-        }
-
-        Picture vertical_displacement_diagram {
-        }
-    }
-}
-
 Window main_window {
     title: "3D Display Control Panel";
     default-width: 200;
@@ -417,18 +302,6 @@ Window main_window {
             name: "display_density_calibration_box";
             title: "display_density_calibration_box";
             child: display_density_calibration_box;
-        }
-
-        StackPage {
-            name: "horizontal_displacement_calibration_box";
-            title: "horizontal_displacement_calibration_box";
-            child: horizontal_displacement_calibration_box;
-        }
-
-        StackPage {
-            name: "vertical_displacement_calibration_box";
-            title: "vertical_displacement_calibration_box";
-            child: vertical_displacement_calibration_box;
         }
         
     }

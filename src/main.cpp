@@ -181,21 +181,12 @@ activate (GtkApplication *app,
     GtkWidget *calibrate_button = GTK_WIDGET(gtk_builder_get_object(shared_vars::builder, "calibrate_button"));
     GtkWidget *fov_calibration_capture_button = GTK_WIDGET(gtk_builder_get_object(shared_vars::builder, "fov_calibration_capture_button"));
     GtkWidget *display_density_continue_button = GTK_WIDGET(gtk_builder_get_object(shared_vars::builder, "display_density_continue_button"));
-    GtkWidget *horizontal_displacement_continue_button = GTK_WIDGET(gtk_builder_get_object(shared_vars::builder, "horizontal_displacement_continue_button"));
-    GtkWidget *vertical_displacement_continue_button = GTK_WIDGET(gtk_builder_get_object(shared_vars::builder, "vertical_displacement_continue_button"));
     GtkWidget *measurements_continue_button = GTK_WIDGET(gtk_builder_get_object(shared_vars::builder, "measurements_continue_button"));
-    GtkWidget *start_display_button = GTK_WIDGET(gtk_builder_get_object(shared_vars::builder, "start_display_button"));
 
     g_signal_connect(calibrate_button, "clicked", G_CALLBACK(event_handlers::on_calibrate_button_clicked), NULL);
     g_signal_connect(fov_calibration_capture_button, "clicked", G_CALLBACK(event_handlers::on_fov_calibration_capture_clicked), NULL);
     g_signal_connect(display_density_continue_button, "clicked", G_CALLBACK(event_handlers::on_display_density_continue_clicked), NULL);
     g_signal_connect(measurements_continue_button, "clicked", G_CALLBACK(event_handlers::on_measurements_continue_clicked), NULL);
-    g_signal_connect(start_display_button, "clicked", G_CALLBACK(event_handlers::on_start_display_clicked), NULL);
-
-    // Set up renderer ready dispatcher
-    shared_vars::renderer_ready_dispatcher.connect([]() {
-        event_handlers::on_renderer_success();
-    });
 
     // Set up the entry pointers
     shared_vars::qr_code_distance_editable = GTK_EDITABLE(gtk_builder_get_object(shared_vars::builder, "qr_code_distance_entry"));
@@ -209,6 +200,17 @@ activate (GtkApplication *app,
     // Show the window
 
     gtk_window_present (GTK_WINDOW (window));
+
+    // Start the renderer
+    shared_vars::acceptor.open(shared_vars::endpoint.protocol());
+    shared_vars::acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+    shared_vars::acceptor.bind(shared_vars::endpoint);
+    shared_vars::acceptor.listen(1);
+
+    std::thread t(shared_vars::listen_for_renderer_socket_and_call_dispatcher);
+    t.detach();
+
+    shared_vars::renderer_program = new boost::process::child("renderer");
 
 }
 

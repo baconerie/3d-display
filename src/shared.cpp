@@ -30,7 +30,6 @@ namespace shared_vars {
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address(boost::asio::ip::address_v4(2130706433)), 42842);    
     boost::asio::ip::tcp::acceptor acceptor(io_context);
 
-    Glib::Dispatcher renderer_ready_dispatcher;
     bool is_renderer_active = false;
 
     GtkBuilder *builder = nullptr;
@@ -44,10 +43,35 @@ namespace shared_vars {
 }
 
 void shared_vars::listen_for_renderer_socket_and_call_dispatcher() {
-    //std::cout << "Beginning listen." << std::endl;
     shared_vars::acceptor.accept(shared_vars::socket);
-    //std::cout << "We accepted something!!!!." << std::endl;
-    shared_vars::renderer_ready_dispatcher.emit();
+    
+    
+    // Renderer is now connected, load settings, enable flag
+    shared_vars::is_renderer_active = true;
+
+    // Check if settings file exists
+    std::ifstream save_file("calibration_settings.txt");
+    if (save_file.is_open()) {
+        std::string line;
+        
+        try {
+            std::getline(save_file, line);
+            parameters::webcam_fov_deg = std::stof(line);
+            std::getline(save_file, line);
+            parameters::pixels_per_lens = std::stof(line);
+            std::getline(save_file, line);
+            parameters::index_of_refraction = std::stof(line);
+        } catch (const std::invalid_argument& e) {
+            std::cerr << "Invalid settings file: " << e.what() << std::endl;
+        }
+
+        save_file.close();
+
+        // Send these settings to the renderer
+        boost::asio::write(shared_vars::socket, boost::asio::buffer({(int64_t)2}));
+        boost::asio::write(shared_vars::socket, boost::asio::buffer({(float_t)parameters::pixels_per_lens}));
+        boost::asio::write(shared_vars::socket, boost::asio::buffer({(float_t)parameters::index_of_refraction}));
+    }
 }
 
 namespace working_parameters {
