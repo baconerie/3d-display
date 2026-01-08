@@ -46,7 +46,7 @@ namespace shared_vars {
     extern std::atomic<bool> do_cv_thread_run;
 
     extern boost::asio::io_context io_context;
-    extern boost::asio::ip::tcp::socket socket;
+    extern boost::asio::ip::tcp::socket renderer_socket;
     extern boost::asio::ip::tcp::endpoint endpoint;
     extern boost::asio::ip::tcp::acceptor acceptor;
 

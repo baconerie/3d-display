@@ -66,14 +66,14 @@ void request_cv_process_update() {
                 if (shared_vars::is_renderer_active) {
                     std::vector<int64_t> request_code;
                     request_code.push_back((int64_t)4);
-                    boost::asio::write(shared_vars::socket, boost::asio::buffer(request_code));
+                    boost::asio::write(shared_vars::renderer_socket, boost::asio::buffer(request_code));
 
                     std::vector<double_t> message;
                     message.push_back((double_t)shared_vars::left_eye_horizontal_angle);
                     message.push_back((double_t)shared_vars::left_eye_vertical_angle);
                     message.push_back((double_t)shared_vars::right_eye_horizontal_angle);
                     message.push_back((double_t)shared_vars::right_eye_vertical_angle);
-                    boost::asio::write(shared_vars::socket, boost::asio::buffer(message));
+                    boost::asio::write(shared_vars::renderer_socket, boost::asio::buffer(message));
                 }
             }
         }
@@ -221,6 +221,12 @@ static void deactivate(GtkApplication *app, void *data) {
     std::cout << "Joining thread, waiting for thread end" << std::endl;
     shared_vars::cv_process_thread.join();
     std::cout << "Thread ended" << std::endl;
+
+    std::cout << "Releasing webcam" << std::endl;
+    shared_vars::webcam_capture.release();
+
+    std::cout << "Tell renderer to quit" << std::endl;
+    boost::asio::write(shared_vars::renderer_socket, boost::asio::buffer({(int64_t)5}));    
 }
 
 int

@@ -26,7 +26,7 @@ namespace shared_vars {
     std::atomic<bool> do_cv_thread_run{true};
 
     boost::asio::io_context io_context;
-    boost::asio::ip::tcp::socket socket(io_context);
+    boost::asio::ip::tcp::socket renderer_socket(io_context);
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address(boost::asio::ip::address_v4(2130706433)), 42842);    
     boost::asio::ip::tcp::acceptor acceptor(io_context);
 
@@ -43,7 +43,7 @@ namespace shared_vars {
 }
 
 void shared_vars::listen_for_renderer_socket_and_call_dispatcher() {
-    shared_vars::acceptor.accept(shared_vars::socket);
+    shared_vars::acceptor.accept(shared_vars::renderer_socket);
     
     
     // Renderer is now connected, load settings, enable flag
@@ -68,9 +68,9 @@ void shared_vars::listen_for_renderer_socket_and_call_dispatcher() {
         save_file.close();
 
         // Send these settings to the renderer
-        boost::asio::write(shared_vars::socket, boost::asio::buffer({(int64_t)2}));
-        boost::asio::write(shared_vars::socket, boost::asio::buffer({(float_t)parameters::pixels_per_lens}));
-        boost::asio::write(shared_vars::socket, boost::asio::buffer({(float_t)parameters::index_of_refraction}));
+        boost::asio::write(shared_vars::renderer_socket, boost::asio::buffer({(int64_t)2}));
+        boost::asio::write(shared_vars::renderer_socket, boost::asio::buffer({(float_t)parameters::pixels_per_lens}));
+        boost::asio::write(shared_vars::renderer_socket, boost::asio::buffer({(float_t)parameters::index_of_refraction}));
     }
 }
 
