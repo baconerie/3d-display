@@ -2,7 +2,6 @@
 
 // Parameters used to calculate other final parameters
 // These do not need to be saved
-namespace working_parameters {}
 
 void event_handlers::on_calibrate_button_clicked (GtkWidget *widget, gpointer _)
 {
